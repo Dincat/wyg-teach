@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachCollegeStageMapper">
+
+    <resultMap type="TeachCollegeStage" id="TeachCollegeStageResult">
+        <result property="id" column="id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="stageCode" column="stage_code"/>
+        <result property="eduSystem" column="edu_system"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+    <sql id="selectTeachCollegeStageVo">
+        select s.id, s.stage_name, s.stage_code, s.edu_system, s.order_num,s.college_id, s.status, s.remark, s.del_flag, s.tenant_id,
+        s.tenant_code, s.create_id, s.create_by, s.create_time, s.update_id, s.update_by, s.update_time
+        from teach_college_stage s
+    </sql>
+
+    <select id="selectTeachCollegeStageList" parameterType="TeachCollegeStage" resultMap="TeachCollegeStageResult">
+        <include refid="selectTeachCollegeStageVo"/>
+        <where>
+            <if test="stageName != null  and stageName != ''">and s.stage_name like concat('%', #{stageName}, '%')</if>
+            <if test="stageCode != null  and stageCode != ''">and s.stage_code like concat('%', #{stageCode}, '%')</if>
+            <if test="eduSystem != null  and eduSystem != ''">and s.edu_system = #{eduSystem}</if>
+            <if test="collegeId != null  and collegeId != 0">and s.college_id = #{collegeId}</if>
+            <if test="params != null  and params.collegeIds != null  and params.collegeIds != ''">
+                and s.college_id in
+                <foreach item="deptId" index="index" collection="params.collegeIds.split(',')" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+
+            <if test="status != null  and status != ''">and s.status = #{status}</if>
+
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+
+
+
+        <choose>
+            <when test="params.orderByColumn != null and params.isAsc!=null ">
+                order by s.${params.orderByColumn} ${params.isAsc}
+            </when>
+            <otherwise>
+                order by s.order_num asc,s.id asc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectTeachCollegeStageById" parameterType="Long" resultMap="TeachCollegeStageResult">
+        <include refid="selectTeachCollegeStageVo"/>
+        where s.id = #{id}
+    </select>
+
+    <insert id="insertTeachCollegeStage" parameterType="TeachCollegeStage" useGeneratedKeys="true" keyProperty="id">
+        insert into teach_college_stage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stageName != null">stage_name,</if>
+            <if test="stageCode != null">stage_code,</if>
+            <if test="eduSystem != null">edu_system,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stageName != null">#{stageName},</if>
+            <if test="stageCode != null">#{stageCode},</if>
+            <if test="eduSystem != null">#{eduSystem},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachCollegeStage" parameterType="TeachCollegeStage">
+        update teach_college_stage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stageName != null">stage_name = #{stageName},</if>
+            <if test="stageCode != null">stage_code = #{stageCode},</if>
+            <if test="eduSystem != null">edu_system = #{eduSystem},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachCollegeStageById" parameterType="Long">
+        delete from teach_college_stage where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachCollegeStageByIds" parameterType="String">
+        delete from teach_college_stage where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

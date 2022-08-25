@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachClassStageMapper">
+
+    <resultMap type="TeachClassStage" id="TeachClassStageResult">
+        <result property="id" column="id"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="classId" column="class_id"/>
+        <result property="stageId" column="stage_id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="classes" column="class_id" javaType="TeachClasses" resultMap="TeachClassesResult"/>
+    </resultMap>
+
+
+    <resultMap type="TeachClasses" id="TeachClassesResult">
+        <result property="id" column="class_id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCode" column="class_code"/>
+        <result property="classType" column="class_type"/>
+        <result property="readingCount" column="reading_count"/>
+        <result property="dropOutCount" column="drop_out_count"/>
+        <result property="absenceCount" column="absence_count"/>
+        <result property="employmentCount" column="employment_count"/>
+        <result property="stage" column="stage"/>
+
+    </resultMap>
+
+
+
+    <sql id="selectTeachClassStageVo">
+        select t.id, t.class_id, t.stage_id, t.stage_name,t.start_time, t.end_time, t.status, t.remark, t.tenant_id, t.tenant_code, t.create_id,
+        t.create_by, t.create_time, t.update_id, t.update_by, t.update_time,
+        tc.id as class_id, tc.class_name, tc.class_code, tc.class_type, tc.stage
+        from teach_class_stage t
+        left join teach_classes tc on tc.id=t.class_id
+    </sql>
+
+
+
+    <select id="selectTeachClassStageList" parameterType="TeachClassStage" resultMap="TeachClassStageResult">
+        <include refid="selectTeachClassStageVo"/>
+        <where>
+            <if test="classId != null ">and class_id = #{classId}</if>
+            <if test="stageId != null ">and stage_id = #{stageId}</if>
+            <if test="startTime != null ">and start_time = #{startTime}</if>
+            <if test="endTime != null ">and end_time = #{endTime}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectTeachClassStageById" parameterType="Long" resultMap="TeachClassStageResult">
+        <include refid="selectTeachClassStageVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachClassStage" parameterType="TeachClassStage">
+        insert into teach_class_stage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="classId != null">class_id,</if>
+            <if test="stageId != null">stage_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="classId != null">#{classId},</if>
+            <if test="stageId != null">#{stageId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachClassStage" parameterType="TeachClassStage">
+        update teach_class_stage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="stageId != null">stage_id = #{stageId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachClassStageById" parameterType="Long">
+        delete from teach_class_stage where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachClassStageByIds" parameterType="String">
+        delete from teach_class_stage where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        insert into teach_class_stage (
+        college_id,
+        class_id,
+        stage_id,
+        stage_name,
+        order_num,
+        start_time,
+        end_time,
+        status,
+        remark,
+        tenant_id,
+        tenant_code,
+        create_id,
+        create_by,
+        create_time,
+        update_id,
+        update_by,
+        update_time
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.collegeId},
+            #{item.classId},
+            #{item.stageId},
+            #{item.stageName},
+            #{item.orderNum},
+            #{item.startTime},
+            #{item.endTime},
+            #{item.status},
+            #{item.remark},
+            #{item.tenantId},
+            #{item.tenantCode},
+            #{item.createId},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateId},
+            #{item.updateBy},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

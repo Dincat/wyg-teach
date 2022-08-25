@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachStudentHomeworkMapper">
+
+    <resultMap type="TeachStudentHomework" id="TeachStudentHomeworkResult">
+        <result property="id" column="id"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="classId" column="class_id"/>
+        <result property="stageId" column="stage_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="homeworkId" column="homework_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="attachments" column="attachments"/>
+        <result property="paperRecordId" column="paper_record_id"/>
+        <result property="answer" column="answer"/>
+        <result property="score" column="score"/>
+        <result property="result" column="result"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="classes" column="class_id" javaType="TeachClasses" resultMap="TeachClassesResult"/>
+        <association property="classesHomework" column="homework_id" javaType="TeachClassHomework" resultMap="TeachClassHomeworkResult"/>
+        <association property="course" column="course_id" javaType="TeachCourse" resultMap="TeachCourseResult"/>
+        <association property="teacher" column="teacher_id" javaType="TeachTeacher" resultMap="TeachTeacherResult"/>
+        <association property="student" column="student_id" javaType="TeachStudent" resultMap="TeachStudentResult"/>
+    </resultMap>
+
+    <resultMap type="TeachClassHomework" id="TeachClassHomeworkResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="collegeId"    column="college_id"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="classId"    column="class_id"    />
+        <result property="paperId"    column="paper_id"    />
+        <result property="stageId"    column="stage_id"    />
+        <result property="description"    column="description"    />
+        <result property="homeworkType"    column="homework_type"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="isPublic"    column="is_public"    />
+        <result property="studentCount"    column="student_count"    />
+        <result property="submitCount"    column="submit_count"    />
+        <result property="deadLine"    column="dead_line"    />
+        <result property="passScore"    column="pass_score"    />
+        <result property="fineScore"    column="fine_score"    />
+        <result property="goodScore"    column="good_score"    />
+        <result property="fullScore"    column="full_score"    />
+        <result property="failCount"    column="fail_count"    />
+        <result property="passCount"    column="pass_count"    />
+        <result property="fineCount"    column="fine_count"    />
+        <result property="goodCount"    column="good_count"    />
+        <result property="fullCount"    column="full_count"    />
+        <result property="remark"    column="remark"    />
+        <result property="publishTime"    column="publish_time"    />
+    </resultMap>
+
+    <resultMap type="TeachClasses" id="TeachClassesResult">
+        <result property="id" column="class_id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCode" column="class_code"/>
+        <result property="classType" column="class_type"/>
+        <result property="readingCount" column="reading_count"/>
+        <result property="dropOutCount" column="drop_out_count"/>
+        <result property="absenceCount" column="absence_count"/>
+        <result property="employmentCount" column="employment_count"/>
+        <result property="stage" column="stage"/>
+        <result property="status" column="class_status"/>
+
+    </resultMap>
+
+    <resultMap type="TeachCourse" id="TeachCourseResult">
+        <result property="id" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="collegeName" column="college_name"/>
+        <result property="majorId" column="major_id"/>
+        <result property="majorName" column="major_name"/>
+    </resultMap>
+
+    <resultMap type="TeachTeacher" id="TeachTeacherResult">
+        <result property="id"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherCode"    column="teacher_code"    />
+        <result property="teacherType"    column="teacher_type"    />
+
+    </resultMap>
+
+    <resultMap type="TeachStudent" id="TeachStudentResult">
+        <result property="stuName" column="stu_name"/>
+        <result property="stuNamePinyin" column="stu_name_pinyin"/>
+        <result property="stuCode" column="stu_code"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="avatar" column="avatar"/>
+        <result property="status" column="status"/>
+        <result property="studentType" column="student_type"/>
+    </resultMap>
+
+    <sql id="selectTeachStudentHomeworkVo">
+        select t.id, t.college_id, t.class_id, t.stage_id, t.course_id, t.homework_id, t.teacher_id, t.student_id, t.attachments, t.paper_record_id, t.answer, t.score, t.result,
+        t.status, t.create_time, t.update_time,
+        tc.id as class_id, tc.class_name, tc.class_code, tc.class_type, tc.stage,tc.status as class_status,
+
+        h.name, h.college_id, h.teacher_id, h.course_id, h.class_id, h.paper_id, h.stage_id, h.description, h.homework_type, h.publish_status, h.is_public,
+        h.student_count, h.submit_count, h.dead_line, h.pass_score, h.fine_score, h.good_score, h.full_score, h.fail_count, h.pass_count, h.fine_count, h.good_count,
+        h.full_count, h.remark,h.publish_time,
+        s.id, s.course_name, s.college_id, s.college_name, s.major_id, s.major_name,
+        a.id as teacher_id, a.teacher_name, a.teacher_code,a.teacher_type,
+
+        stu.stu_name, stu.stu_name_pinyin, stu.stu_code, stu.id_number,
+        stu.avatar, stu.status, stu.student_type
+
+        from teach_student_homework t
+        left join teach_classes tc on tc.id=t.class_id
+        left join teach_class_homework h on h.id=t.homework_id
+        left join teach_course s on s.id=t.course_id
+        left join teach_teacher a on a.id=t.teacher_id
+        left join teach_student stu on stu.id=t.student_id
+    </sql>
+
+    <select id="selectTeachStudentHomeworkList" parameterType="TeachStudentHomework"
+            resultMap="TeachStudentHomeworkResult">
+        <include refid="selectTeachStudentHomeworkVo"/>
+        <where>
+            <if test="classId != null ">and t.class_id = #{classId}</if>
+            <if test="stageId != null ">and t.stage_id = #{stageId}</if>
+            <if test="courseId != null ">and t.course_id = #{courseId}</if>
+            <if test="homeworkId != null ">and t.homework_id = #{homeworkId}</if>
+            <if test="teacherId != null ">and t.teacher_id = #{teacherId}</if>
+            <if test="studentId != null ">and t.student_id = #{studentId}</if>
+            <if test="attachments != null  and attachments != ''">and t.attachments = #{attachments}</if>
+            <if test="paperRecordId != null ">and t.paper_record_id = #{paperRecordId}</if>
+            <if test="answer != null  and answer != ''">and at.nswer = #{answer}</if>
+            <if test="score != null ">and t.score = #{score}</if>
+            <if test="result != null  and result != ''">and t.result = #{result}</if>
+            <if test="status != null  and status != ''">and t.status = #{status}</if>
+
+            <if test="params != null  and params.className != null  and params.className != ''">
+                and tc.class_name like concat('%', #{params.className}, '%')
+            </if>
+
+            <if test="params != null  and params.teacherName != null  and params.teacherName != ''">
+                and a.teacher_name like concat('%', #{params.teacherName}, '%')
+            </if>
+
+            <if test="params != null  and params.studentName != null  and params.studentName != ''">
+                and stu.stu_name like concat('%', #{params.studentName}, '%')
+            </if>
+
+            <if test="collegeId != null  and collegeId != 0">and t.college_id = #{collegeId}</if>
+            <if test="params != null  and params.collegeIds != null  and params.collegeIds != ''">
+                and  t.college_id in
+                <foreach item="deptId" index="index" collection="params.collegeIds.split(',')" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+
+        </where>
+
+        <choose>
+            <when test="params.orderByColumn != null and params.isAsc!=null ">
+                order by ${params.orderByColumn} ${params.isAsc}
+            </when>
+            <otherwise>
+                order by t.create_time desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectTeachStudentHomeworkById" parameterType="Long" resultMap="TeachStudentHomeworkResult">
+        <include refid="selectTeachStudentHomeworkVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachStudentHomework" parameterType="TeachStudentHomework">
+        insert into teach_student_homework
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="classId != null">class_id,</if>
+            <if test="stageId != null">stage_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="homeworkId != null">homework_id,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="attachments != null">attachments,</if>
+            <if test="paperRecordId != null">paper_record_id,</if>
+            <if test="answer != null">answer,</if>
+            <if test="score != null">score,</if>
+            <if test="result != null">result,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="classId != null">#{classId},</if>
+            <if test="stageId != null">#{stageId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="homeworkId != null">#{homeworkId},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="attachments != null">#{attachments},</if>
+            <if test="paperRecordId != null">#{paperRecordId},</if>
+            <if test="answer != null">#{answer},</if>
+            <if test="score != null">#{score},</if>
+            <if test="result != null">#{result},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachStudentHomework" parameterType="TeachStudentHomework">
+        update teach_student_homework
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="stageId != null">stage_id = #{stageId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="homeworkId != null">homework_id = #{homeworkId},</if>
+            <if test="teacherId != null">teacher_id = #{teacherId},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="attachments != null">attachments = #{attachments},</if>
+            <if test="paperRecordId != null">paper_record_id = #{paperRecordId},</if>
+            <if test="answer != null">answer = #{answer},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="result != null">result = #{result},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachStudentHomeworkById" parameterType="Long">
+        delete from teach_student_homework where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachStudentHomeworkByIds" parameterType="String">
+        delete from teach_student_homework where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+        insert into teach_student_homework (
+        college_id,
+        class_id,
+        stage_id,
+        course_id,
+        homework_id,
+        teacher_id,
+        student_id,
+        attachments,
+        paper_record_id,
+        create_time,
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.collegeId},
+            #{item.classId},
+            #{item.stageId},
+            #{item.courseId},
+            #{item.homeworkId},
+            #{item.teacherId},
+            #{item.studentId},
+            #{item.attachments},
+            #{item.paperRecordId},
+            #{item.createTime},
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

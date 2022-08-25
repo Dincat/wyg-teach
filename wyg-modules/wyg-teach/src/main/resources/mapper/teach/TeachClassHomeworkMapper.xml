@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachClassHomeworkMapper">
+
+    <resultMap type="TeachClassHomework" id="TeachClassHomeworkResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="collegeId"    column="college_id"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="classId"    column="class_id"    />
+        <result property="paperId"    column="paper_id"    />
+        <result property="stageId"    column="stage_id"    />
+        <result property="description"    column="description"    />
+        <result property="homeworkType"    column="homework_type"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="isPublic"    column="is_public"    />
+        <result property="studentCount"    column="student_count"    />
+        <result property="submitCount"    column="submit_count"    />
+        <result property="deadLine"    column="dead_line"    />
+        <result property="passScore"    column="pass_score"    />
+        <result property="fineScore"    column="fine_score"    />
+        <result property="goodScore"    column="good_score"    />
+        <result property="fullScore"    column="full_score"    />
+        <result property="failCount"    column="fail_count"    />
+        <result property="passCount"    column="pass_count"    />
+        <result property="fineCount"    column="fine_count"    />
+        <result property="goodCount"    column="good_count"    />
+        <result property="fullCount"    column="full_count"    />
+        <result property="remark"    column="remark"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="tenantCode"    column="tenant_code"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateId"    column="update_id"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="classes" column="class_id" javaType="TeachClasses" resultMap="TeachClassesResult"/>
+        <association property="course" column="course_id" javaType="TeachCourse" resultMap="TeachCourseResult"/>
+        <association property="teacher" column="teacher_id" javaType="TeachTeacher" resultMap="TeachTeacherResult"/>
+    </resultMap>
+
+    <resultMap type="TeachClasses" id="TeachClassesResult">
+        <result property="id" column="class_id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCode" column="class_code"/>
+        <result property="classType" column="class_type"/>
+        <result property="readingCount" column="reading_count"/>
+        <result property="dropOutCount" column="drop_out_count"/>
+        <result property="absenceCount" column="absence_count"/>
+        <result property="employmentCount" column="employment_count"/>
+        <result property="stage" column="stage"/>
+        <result property="status" column="class_status"/>
+    </resultMap>
+
+    <resultMap type="TeachCourse" id="TeachCourseResult">
+        <result property="id" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="collegeName" column="college_name"/>
+        <result property="majorId" column="major_id"/>
+        <result property="majorName" column="major_name"/>
+    </resultMap>
+
+    <resultMap type="TeachTeacher" id="TeachTeacherResult">
+        <result property="id"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherCode"    column="teacher_code"    />
+        <result property="teacherType"    column="teacher_type"    />
+
+    </resultMap>
+
+    <sql id="selectTeachClassHomeworkVo">
+        select t.id, t.name, t.college_id, t.teacher_id, t.course_id, t.class_id, t.paper_id, t.stage_id, t.description, t.homework_type, t.publish_status, t.is_public,
+        t.student_count, t.submit_count, t.dead_line, t.pass_score, t.fine_score, t.good_score, t.full_score, t.fail_count, t.pass_count, t.fine_count, t.good_count,
+        t.full_count, t.remark,t.publish_time, t.tenant_id, t.tenant_code, t.create_id, t.create_by, t.create_time, t.update_id, t.update_by, t.update_time,
+        tc.id as class_id, tc.class_name, tc.class_code, tc.class_type, tc.stage,tc.status as class_status,
+        s.id, s.course_name, s.college_id, s.college_name, s.major_id, s.major_name,
+        a.id as teacher_id, a.teacher_name, a.teacher_code,a.teacher_type
+        from teach_class_homework t
+        left join teach_classes tc on tc.id=t.class_id
+        left join teach_course s on s.id=t.course_id
+        left join teach_teacher a on a.id=t.teacher_id
+    </sql>
+
+    <select id="selectTeachClassHomeworkList" parameterType="TeachClassHomework" resultMap="TeachClassHomeworkResult">
+        <include refid="selectTeachClassHomeworkVo"/>
+        <where>
+            <if test="name != null  and name != ''">and t.name like concat('%', #{name}, '%')</if>
+            <if test="courseId != null ">and t.course_id = #{courseId}</if>
+            <if test="classId != null  and classId != ''">and t.class_id = #{classId}</if>
+            <if test="paperId != null ">and t.paper_id = #{paperId}</if>
+            <if test="stageId != null ">and t.stage_id = #{stageId}</if>
+            <if test="publishStatus != null ">and t.publish_status = #{publishStatus}</if>
+            <if test="isPublic != null ">and t.is_public = #{isPublic}</if>
+            <if test="description != null  and description != ''">and t.description = #{description}</if>
+            <if test="homeworkType != null  and homeworkType != ''">and t.homework_type = #{homeworkType}</if>
+            <if test="failCount != null ">and t.fail_count = #{failCount}</if>
+            <if test="passCount != null ">and t.pass_count = #{passCount}</if>
+            <if test="fineCount != null ">and t.fine_count = #{fineCount}</if>
+            <if test="goodCount != null ">and t.good_count = #{goodCount}</if>
+            <if test="fullCount != null ">and t.full_count = #{fullCount}</if>
+
+            <if test="collegeId != null  and collegeId != 0">and t.college_id = #{collegeId}</if>
+            <if test="params != null  and params.collegeIds != null  and params.collegeIds != ''">
+                and  t.college_id in
+                <foreach item="deptId" index="index" collection="params.collegeIds.split(',')" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+
+        </where>
+
+        <choose>
+            <when test="params.orderByColumn != null and params.isAsc!=null ">
+                order by t.${params.orderByColumn} ${params.isAsc}
+            </when>
+            <otherwise>
+                order by t.create_time desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectTeachClassHomeworkById" parameterType="Long" resultMap="TeachClassHomeworkResult">
+        <include refid="selectTeachClassHomeworkVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachClassHomework" parameterType="TeachClassHomework" useGeneratedKeys="true" keyProperty="id">
+        insert into teach_class_homework
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="classId != null and classId != ''">class_id,</if>
+            <if test="paperId != null">paper_id,</if>
+            <if test="stageId != null">stage_id,</if>
+            <if test="description != null">description,</if>
+            <if test="homeworkType != null">homework_type,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="isPublic != null">is_public,</if>
+            <if test="studentCount != null">student_count,</if>
+            <if test="submitCount != null">submit_count,</if>
+            <if test="deadLine != null">dead_line,</if>
+            <if test="passScore != null">pass_score,</if>
+            <if test="fineScore != null">fine_score,</if>
+            <if test="goodScore != null">good_score,</if>
+            <if test="fullScore != null">full_score,</if>
+            <if test="failCount != null">fail_count,</if>
+            <if test="passCount != null">pass_count,</if>
+            <if test="fineCount != null">fine_count,</if>
+            <if test="goodCount != null">good_count,</if>
+            <if test="fullCount != null">full_count,</if>
+            <if test="remark != null">remark,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="classId != null and classId != ''">#{classId},</if>
+            <if test="paperId != null">#{paperId},</if>
+            <if test="stageId != null">#{stageId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="homeworkType != null">#{homeworkType},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="isPublic != null">#{isPublic},</if>
+            <if test="studentCount != null">#{studentCount},</if>
+            <if test="submitCount != null">#{submitCount},</if>
+            <if test="deadLine != null">#{deadLine},</if>
+            <if test="passScore != null">#{passScore},</if>
+            <if test="fineScore != null">#{fineScore},</if>
+            <if test="goodScore != null">#{goodScore},</if>
+            <if test="fullScore != null">#{fullScore},</if>
+            <if test="failCount != null">#{failCount},</if>
+            <if test="passCount != null">#{passCount},</if>
+            <if test="fineCount != null">#{fineCount},</if>
+            <if test="goodCount != null">#{goodCount},</if>
+            <if test="fullCount != null">#{fullCount},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachClassHomework" parameterType="TeachClassHomework">
+        update teach_class_homework
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="teacherId != null">teacher_id = #{teacherId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="classId != null and classId != ''">class_id = #{classId},</if>
+            <if test="paperId != null">paper_id = #{paperId},</if>
+            <if test="stageId != null">stage_id = #{stageId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="homeworkType != null">homework_type = #{homeworkType},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="isPublic != null">is_public = #{isPublic},</if>
+            <if test="studentCount != null">student_count = #{studentCount},</if>
+            <if test="submitCount != null">submit_count = #{submitCount},</if>
+            <if test="deadLine != null">dead_line = #{deadLine},</if>
+            <if test="passScore != null">pass_score = #{passScore},</if>
+            <if test="fineScore != null">fine_score = #{fineScore},</if>
+            <if test="goodScore != null">good_score = #{goodScore},</if>
+            <if test="fullScore != null">full_score = #{fullScore},</if>
+            <if test="failCount != null">fail_count = #{failCount},</if>
+            <if test="passCount != null">pass_count = #{passCount},</if>
+            <if test="fineCount != null">fine_count = #{fineCount},</if>
+            <if test="goodCount != null">good_count = #{goodCount},</if>
+            <if test="fullCount != null">full_count = #{fullCount},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachClassHomeworkById" parameterType="Long">
+        delete from teach_class_homework where publish_status=1 and id = #{id}
+    </delete>
+
+    <delete id="deleteTeachClassHomeworkByIds" parameterType="String">
+        delete from teach_class_homework where publish_status=1 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

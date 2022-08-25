@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachClassesMapper">
+
+    <resultMap type="TeachClasses" id="TeachClassesResult">
+        <result property="id" column="id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCode" column="class_code"/>
+        <result property="classType" column="class_type"/>
+        <result property="readingCount" column="reading_count"/>
+        <result property="dropOutCount" column="drop_out_count"/>
+        <result property="absenceCount" column="absence_count"/>
+        <result property="levelCount" column="level_count"/>
+        <result property="graduateCount" column="graduate_count"/>
+        <result property="employmentCount" column="employment_count"/>
+        <result property="stage" column="stage"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="majorId" column="major_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+        <association property="teacher" column="teacher_id" javaType="TeachTeacher" resultMap="TeachTeacherResult"/>
+        <association property="major" column="major_id" javaType="TeachMajor" resultMap="TeachMajorResult"/>
+
+    </resultMap>
+
+
+    <resultMap type="TeachTeacher" id="TeachTeacherResult">
+        <result property="id"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherCode"    column="teacher_code"    />
+        <result property="teacherType"    column="teacher_type"    />
+
+    </resultMap>
+
+    <resultMap type="TeachMajor" id="TeachMajorResult">
+        <result property="id" column="major_id"/>
+        <result property="majorName" column="major_name"/>
+        <result property="majorType" column="major_type"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="remark" column="remark"/>
+
+    </resultMap>
+
+    <sql id="selectTeachClassesVo">
+        select t.id, t.class_name, t.class_code, t.class_type, t.reading_count, t.drop_out_count, t.absence_count, t.level_count,t.graduate_count,t.employment_count,
+        t.stage, t.start_time, t.end_time, t.college_id, t.major_id, t.teacher_id, t.status, t.remark, t.del_flag, t.tenant_id, t.tenant_code,
+        t.create_id, t.create_by, t.create_time, t.update_id, t.update_by, t.update_time,
+        a.id as teacher_id, a.teacher_name, a.teacher_code,a.teacher_type,
+        m.id, m.major_name, m.major_type, m.college_id, m.remark
+        from teach_classes t
+        left join teach_teacher a on a.id=t.teacher_id
+        left join teach_major m on m.id=t.major_id
+    </sql>
+
+    <select id="selectTeachClassesList" parameterType="TeachClasses" resultMap="TeachClassesResult">
+        <include refid="selectTeachClassesVo"/>
+        <where>
+            <if test="className != null  and className != ''">and t.class_name like concat('%', #{className}, '%')</if>
+            <if test="classCode != null  and classCode != ''">and t.class_code = #{classCode}</if>
+            <if test="classType != null  and classType != ''">and t.class_type = #{classType}</if>
+            <if test="readingCount != null ">and t.reading_count = #{readingCount}</if>
+            <if test="dropOutCount != null ">and t.drop_out_count = #{dropOutCount}</if>
+            <if test="absenceCount != null ">and t.absence_count = #{absenceCount}</if>
+            <if test="employmentCount != null ">and t.employment_count = #{employmentCount}</if>
+            <if test="stage != null  and stage != ''">and t.stage = #{stage}</if>
+            <if test="startTime != null ">and t.start_time = #{startTime}</if>
+            <if test="endTime != null ">and t.end_time = #{endTime}</if>
+            <if test="majorId != null ">and t.major_id = #{majorId}</if>
+            <if test="teacherId != null ">and t.teacher_id = #{teacherId}</if>
+            <if test="status != null  and status != ''">and t.status = #{status}</if>
+            <if test="tenantId != null ">and t.tenant_id = #{tenantId}</if>
+            <if test="tenantCode != null  and tenantCode != ''">and t.tenant_code = #{tenantCode}</if>
+            <if test="createId != null ">and t.create_id = #{createId}</if>
+            <if test="updateId != null ">and t.update_id = #{updateId}</if>
+
+            <if test="collegeId != null  and collegeId != 0">and t.college_id = #{collegeId}</if>
+
+            <if test="params != null  and params.collegeIds != null  and params.collegeIds != ''">
+                and  t.college_id in
+                <foreach item="deptId" index="index" collection="params.collegeIds.split(',')" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+
+        </where>
+
+        <choose>
+            <when test="params.orderByColumn != null and params.isAsc!=null ">
+                order by t.${params.orderByColumn} ${params.isAsc}
+            </when>
+            <otherwise>
+                order by t.create_time desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectTeachClassesById" parameterType="Long" resultMap="TeachClassesResult">
+        <include refid="selectTeachClassesVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachClasses" parameterType="TeachClasses" useGeneratedKeys="true" keyProperty="id">
+        insert into teach_classes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="className != null">class_name,</if>
+            <if test="classCode != null">class_code,</if>
+            <if test="classType != null">class_type,</if>
+            <if test="readingCount != null">reading_count,</if>
+            <if test="dropOutCount != null">drop_out_count,</if>
+            <if test="absenceCount != null">absence_count,</if>
+            <if test="levelCount != null">level_count,</if>
+            <if test="graduateCount != null">graduate_count,</if>
+            <if test="employmentCount != null">employment_count,</if>
+            <if test="stage != null">stage,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="majorId != null">major_id,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="className != null">#{className},</if>
+            <if test="classCode != null">#{classCode},</if>
+            <if test="classType != null">#{classType},</if>
+            <if test="readingCount != null">#{readingCount},</if>
+            <if test="dropOutCount != null">#{dropOutCount},</if>
+            <if test="absenceCount != null">#{absenceCount},</if>
+            <if test="levelCount != null">#{levelCount},</if>
+            <if test="graduateCount != null">#{graduateCount},</if>
+            <if test="employmentCount != null">#{employmentCount},</if>
+            <if test="stage != null">#{stage},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="majorId != null">#{majorId},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachClasses" parameterType="TeachClasses">
+        update teach_classes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="className != null">class_name = #{className},</if>
+            <if test="classCode != null">class_code = #{classCode},</if>
+            <if test="classType != null">class_type = #{classType},</if>
+            <if test="readingCount != null">reading_count = #{readingCount},</if>
+            <if test="dropOutCount != null">drop_out_count = #{dropOutCount},</if>
+            <if test="absenceCount != null">absence_count = #{absenceCount},</if>
+            <if test="levelCount != null">level_count = #{levelCount},</if>
+            <if test="graduateCount != null">graduate_count = #{graduateCount},</if>
+            <if test="employmentCount != null">employment_count = #{employmentCount},</if>
+            <if test="stage != null">stage = #{stage},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="majorId != null">major_id = #{majorId},</if>
+            <if test="teacherId != null">teacher_id = #{teacherId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachClassesById" parameterType="Long">
+        delete from teach_classes where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachClassesByIds" parameterType="String">
+        delete from teach_classes where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

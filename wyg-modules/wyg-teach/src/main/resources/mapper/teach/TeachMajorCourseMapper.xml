@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachMajorCourseMapper">
+
+    <resultMap type="TeachMajorCourse" id="TeachMajorCourseResult">
+        <result property="id" column="id"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="majorId" column="major_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="stageId" column="stage_id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="period" column="period"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="tenantCode" column="tenant_code"/>
+        <result property="createId" column="create_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+        <association property="course" column="course_id" javaType="TeachCourse" resultMap="TeachCourseResult"/>
+    </resultMap>
+
+    <resultMap type="TeachCourse" id="TeachCourseResult">
+        <result property="id" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="collegeId" column="college_id"/>
+        <result property="collegeName" column="college_name"/>
+        <result property="majorId" column="major_id"/>
+        <result property="majorName" column="major_name"/>
+    </resultMap>
+
+
+
+
+    <sql id="selectTeachMajorCourseVo">
+        select t.id, t.college_id, t.major_id, t.course_id,t.stage_id,t.stage_name, t.period, t.status, t.remark, t.tenant_id, t.tenant_code,
+        t.create_id, t.create_by, t.create_time, t.update_id, t.update_by, t.update_time,
+        s.id, s.course_name, s.college_id, s.college_name, s.major_id, s.major_name
+        from teach_major_course t
+        left join teach_course s on s.id=t.course_id
+    </sql>
+
+    <select id="selectTeachMajorCourseList" parameterType="TeachMajorCourse" resultMap="TeachMajorCourseResult">
+        <include refid="selectTeachMajorCourseVo"/>
+        <where>
+            <if test="collegeId != null ">and college_id = #{collegeId}</if>
+            <if test="majorId != null ">and major_id = #{majorId}</if>
+            <if test="courseId != null ">and course_id = #{courseId}</if>
+            <if test="period != null ">and period = #{period}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectTeachMajorCourseById" parameterType="Long" resultMap="TeachMajorCourseResult">
+        <include refid="selectTeachMajorCourseVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachMajorCourse" parameterType="TeachMajorCourse">
+        insert into teach_major_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="majorId != null">major_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="stageId != null">stage_id,</if>
+            <if test="stageName != null">stage_name,</if>
+            <if test="period != null">period,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="majorId != null">#{majorId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="stageId != null">#{stageId},</if>
+            <if test="stageName != null">#{stageName},</if>
+            <if test="period != null">#{period},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachMajorCourse" parameterType="TeachMajorCourse">
+        update teach_major_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="majorId != null">major_id = #{majorId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="stageId != null">stage_id = #{stageId},</if>
+            <if test="stageName != null">stage_name = #{stageName},</if>
+            <if test="period != null">period = #{period},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachMajorCourseById" parameterType="Long">
+        delete from teach_major_course where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachMajorCourseByIds" parameterType="String">
+        delete from teach_major_course where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

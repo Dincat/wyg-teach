@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wyg.teach.mapper.TeachTeacherMapper">
+
+    <resultMap type="TeachTeacher" id="TeachTeacherResult">
+        <result property="id"    column="id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherCode"    column="teacher_code"    />
+        <result property="teacherType"    column="teacher_type"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="education"    column="education"    />
+        <result property="degree"    column="degree"    />
+        <result property="englishLevel"    column="english_Level"    />
+        <result property="politicsStatus"    column="politics_status"    />
+        <result property="email"    column="email"    />
+        <result property="phone"    column="phone"    />
+        <result property="mail"    column="mail"    />
+        <result property="qq"    column="qq"    />
+        <result property="nation"    column="nation"    />
+        <result property="province"    column="province"    />
+        <result property="provinceKey"    column="province_key"    />
+        <result property="city"    column="city"    />
+        <result property="cityKey"    column="city_key"    />
+        <result property="district"    column="district"    />
+        <result property="districtKey"    column="district_key"    />
+        <result property="town"    column="town"    />
+        <result property="townKey"    column="town_key"    />
+        <result property="address"    column="address"    />
+        <result property="sex"    column="sex"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="collegeId"    column="college_id"    />
+        <result property="collegeName"    column="college_name"    />
+        <result property="majorId"    column="major_id"    />
+        <result property="majorName"    column="major_name"    />
+        <result property="status"    column="status"    />
+        <result property="graduateSchool"    column="graduate_school"    />
+        <result property="graduateMajor"    column="graduate_major"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="userId"    column="user_id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="tenantCode"    column="tenant_code"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateId"    column="update_id"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+
+    </resultMap>
+
+
+    <sql id="selectTeachTeacherVo">
+        select t.id, t.teacher_name, t.teacher_code,t.teacher_type, t.id_number, t.birthday, t.education,t.degree,t.english_Level, t.politics_status, t.email, t.phone,
+        t.mail, t.qq, t.nation, t.province, t.province_key, t.city, t.city_key, t.district, t.district_key, t.town, t.town_key, t.address, t.sex, t.avatar, t.college_id, t.major_id, t.major_name,
+        t.status,t.graduate_school, t.graduate_major, t.remark, t.del_flag, t.user_id, t.tenant_id, t.tenant_code, t.create_id, t.create_by, t.create_time, t.update_id, t.update_by, t.update_time
+        from teach_teacher t
+    </sql>
+
+    <select id="selectTeachTeacherList" parameterType="TeachTeacher" resultMap="TeachTeacherResult">
+        <include refid="selectTeachTeacherVo"/>
+        <where>
+            <if test="teacherName != null  and teacherName != ''">and t.teacher_name like concat('%', #{teacherName},
+                '%')
+            </if>
+            <if test="teacherCode != null  and teacherCode != ''">and t.teacher_code = #{teacherCode}</if>
+            <if test="teacherType != null  and teacherType != ''">and t.teacher_type = #{teacherType}</if>
+            <if test="idNumber != null  and idNumber != ''">and t.id_number = #{idNumber}</if>
+            <if test="education != null  and education != ''">and t.education = #{education}</if>
+            <if test="politicsStatus != null  and politicsStatus != ''">and t.politics_status = #{politicsStatus}</if>
+            <if test="phone != null  and phone != ''">and t.phone = #{phone}</if>
+            <if test="nation != null  and nation != ''">and t.nation = #{nation}</if>
+            <if test="sex != null  and sex != ''">and t.sex = #{sex}</if>
+            <if test="avatar != null  and avatar != ''">and t.avatar = #{avatar}</if>
+            <if test="majorId != null ">and t.major_id = #{majorId}</if>
+            <if test="status != null  and status != ''">and t.status = #{status}</if>
+            <if test="createBy != null  and createBy != ''">and t.create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != ''">and t.update_by = #{updateBy}</if>
+
+            <if test="collegeId != null  and collegeId != 0">and t.college_id = #{collegeId}</if>
+            <if test="params != null  and params.collegeIds != null  and params.collegeIds != ''">
+                and  t.college_id in
+                <foreach item="deptId" index="index" collection="params.collegeIds.split(',')" open="(" close=")" separator=",">
+                    #{deptId}
+                </foreach>
+            </if>
+
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+
+        </where>
+
+        <choose>
+            <when test="params.orderByColumn != null and params.isAsc!=null ">
+                order by t.${params.orderByColumn} ${params.isAsc}
+            </when>
+            <otherwise>
+                order by t.create_time desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectTeachTeacherById" parameterType="Long" resultMap="TeachTeacherResult">
+        <include refid="selectTeachTeacherVo"/>
+        where t.id = #{id}
+    </select>
+
+    <insert id="insertTeachTeacher" parameterType="TeachTeacher" useGeneratedKeys="true" keyProperty="id">
+        insert into teach_teacher
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherName != null and teacherName != ''">teacher_name,</if>
+            <if test="teacherCode != null and teacherCode != ''">teacher_code,</if>
+            <if test="teacherType != null and teacherType != ''">teacher_type,</if>
+            <if test="idNumber != null">id_number,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="education != null">education,</if>
+            <if test="degree != null">degree,</if>
+            <if test="englishLevel != null">english_Level,</if>
+            <if test="politicsStatus != null">politics_status,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="mail != null">mail,</if>
+            <if test="qq != null">qq,</if>
+            <if test="nation != null">nation,</if>
+            <if test="province != null">province,</if>
+            <if test="provinceKey != null">province_key,</if>
+            <if test="city != null">city,</if>
+            <if test="cityKey != null">city_key,</if>
+            <if test="district != null">district,</if>
+            <if test="districtKey != null">district_key,</if>
+            <if test="town != null">town,</if>
+            <if test="townKey != null">town_key,</if>
+            <if test="address != null">address,</if>
+            <if test="sex != null">sex,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="collegeId != null">college_id,</if>
+            <if test="collegeName != null">college_name,</if>
+            <if test="majorId != null">major_id,</if>
+            <if test="majorName != null">major_name,</if>
+            <if test="status != null">status,</if>
+            <if test="graduateSchool != null">graduate_school,</if>
+            <if test="graduateMajor != null">graduate_major,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantCode != null">tenant_code,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherName != null and teacherName != ''">#{teacherName},</if>
+            <if test="teacherCode != null and teacherCode != ''">#{teacherCode},</if>
+            <if test="teacherType != null and teacherType != ''">#{teacherType},</if>
+            <if test="idNumber != null">#{idNumber},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="education != null">#{education},</if>
+            <if test="degree != null">#{degree},</if>
+            <if test="englishLevel != null">#{englishLevel},</if>
+            <if test="politicsStatus != null">#{politicsStatus},</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="mail != null">#{mail},</if>
+            <if test="qq != null">#{qq},</if>
+            <if test="nation != null">#{nation},</if>
+            <if test="province != null">#{province},</if>
+            <if test="provinceKey != null">#{provinceKey},</if>
+            <if test="city != null">#{city},</if>
+            <if test="cityKey != null">#{cityKey},</if>
+            <if test="district != null">#{district},</if>
+            <if test="districtKey != null">#{districtKey},</if>
+            <if test="town != null">#{town},</if>
+            <if test="townKey != null">#{townKey},</if>
+            <if test="address != null">#{address},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="collegeName != null">#{collegeName},</if>
+            <if test="majorId != null">#{majorId},</if>
+            <if test="majorName != null">#{majorName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="graduateSchool != null">#{graduateSchool},</if>
+            <if test="graduateMajor != null">#{graduateMajor},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantCode != null">#{tenantCode},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeachTeacher" parameterType="TeachTeacher">
+        update teach_teacher
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacherName != null and teacherName != ''">teacher_name = #{teacherName},</if>
+            <if test="teacherCode != null and teacherCode != ''">teacher_code = #{teacherCode},</if>
+            <if test="teacherType != null and teacherType != ''">teacher_type = #{teacherType},</if>
+            <if test="idNumber != null">id_number = #{idNumber},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="degree != null">degree = #{degree},</if>
+            <if test="englishLevel != null">english_Level = #{englishLevel},</if>
+            <if test="politicsStatus != null">politics_status = #{politicsStatus},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="mail != null">mail = #{mail},</if>
+            <if test="qq != null">qq = #{qq},</if>
+            <if test="nation != null">nation = #{nation},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="provinceKey != null">province_key = #{provinceKey},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="cityKey != null">city_key = #{cityKey},</if>
+            <if test="district != null">district = #{district},</if>
+            <if test="districtKey != null">district_key = #{districtKey},</if>
+            <if test="town != null">town = #{town},</if>
+            <if test="townKey != null">town_key = #{townKey},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="collegeName != null">college_name = #{collegeName},</if>
+            <if test="majorId != null">major_id = #{majorId},</if>
+            <if test="majorName != null">major_name = #{majorName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="graduateSchool != null">graduate_school = #{graduateSchool},</if>
+            <if test="graduateMajor != null">graduate_major = #{graduateMajor},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantCode != null">tenant_code = #{tenantCode},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeachTeacherById" parameterType="Long">
+        delete from teach_teacher where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachTeacherByIds" parameterType="String">
+        delete from teach_teacher where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
